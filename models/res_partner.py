@@ -16,7 +16,7 @@
 # all copies or substantial portions of the Software.
 #
 #################################################################################
-"""	@version	20.0.1.0.0
+"""	@version	20.0.1.0.1
 	@owner  Hadron for Business
 	@author Hadron for Business sp. z o.o.
 	@date   2026.10.08
@@ -63,14 +63,35 @@ class ResPartner(models.Model):
             ('date_maturity', '<', cutoff),
         ], order='date_maturity, id')
 
+    def _overdue_items(self, company=None):
+        """[(receivable line, amount still overdue)] - since Odoo 18 a registered payment may have no journal
+        entry until it is matched with the bank statement (invoice "In Payment"): such payments are deducted."""
+        lines = self._overdue_lines(company)
+        pending = {}
+        if 'matched_payment_ids' in self.env['account.move']._fields:
+            for move in lines.move_id:
+                payments = move.sudo().matched_payment_ids.filtered(
+                    lambda p: not p.move_id and p.state in ('in_process', 'paid'))
+                pending[move.id] = sum(payments.mapped('amount_company_currency_signed'))
+        items = []
+        for line in lines:
+            amount = line.amount_residual
+            if pending.get(line.move_id.id) and amount > 0:
+                deducted = min(amount, pending[line.move_id.id])
+                pending[line.move_id.id] -= deducted
+                amount -= deducted
+            if not line.company_currency_id.is_zero(amount):
+                items.append((line, amount))
+        return items
+
     @api.depends_context('company')
     def _compute_overdue_amount(self):
         company = self.env.company
         for partner in self:
-            lines = partner._overdue_lines(company) if partner.id else self.env['account.move.line']
-            partner.overdue_amount = sum(lines.mapped('amount_residual'))
+            items = partner._overdue_items(company) if partner.id else []
+            partner.overdue_amount = sum(amount for _line, amount in items)
             partner.overdue_currency_id = company.currency_id
-            partner.overdue_invoice_count = len(lines.move_id.filtered(lambda m: m.is_invoice()))
+            partner.overdue_invoice_count = len({line.move_id.id for line, _a in items if line.move_id.is_invoice()})
 
     def get_overdue_statement_lines(self):
         """Lines of the Overdue Statement report (one per overdue receivable item)."""
@@ -82,12 +103,12 @@ class ResPartner(models.Model):
             'due': line.date_maturity,
             'days': (today - line.date_maturity).days,
             'total': line.move_id.amount_total_signed if line.move_id.is_invoice() else line.balance,
-            'residual': line.amount_residual,
-        } for line in self._overdue_lines()]
+            'residual': amount,
+        } for line, amount in self._overdue_items()]
 
     def action_view_overdue_invoices(self):
         self.ensure_one()
-        moves = self._overdue_lines().move_id
+        moves = self.env['account.move'].union(*(line.move_id for line, _a in self._overdue_items()))
         return {
             'name': _("Overdue Invoices"),
             'type': 'ir.actions.act_window',
