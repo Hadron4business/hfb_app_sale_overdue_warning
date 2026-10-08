@@ -32,4 +32,4 @@ Overdue warning on quotations and orders, with a tolerance in days, an optional 
 
 ## Status
 
-Odoo 19 build. Missing before publication: tests on 17/18/19/20, icon, banner.
+Odoo 20 build. Missing before publication: tests on 17/18/19/20, icon, banner.
