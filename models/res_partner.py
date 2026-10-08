@@ -16,7 +16,7 @@
 # all copies or substantial portions of the Software.
 #
 #################################################################################
-"""	@version	17.0.1.0.0
+"""	@version	18.0.1.0.0
 	@owner  Hadron for Business
 	@author Hadron for Business sp. z o.o.
 	@date   2026.10.08
@@ -92,7 +92,7 @@ class ResPartner(models.Model):
             'name': _("Overdue Invoices"),
             'type': 'ir.actions.act_window',
             'res_model': 'account.move',
-            'view_mode': 'tree,form',
+            'view_mode': 'list,form',
             'domain': [('id', 'in', moves.ids)],
             'context': {'create': False},
         }
