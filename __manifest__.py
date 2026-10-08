@@ -36,7 +36,7 @@ the order is blocked until the customer pays - sales managers can still
 confirm. A printable and e-mailable Overdue Statement lists the late
 invoices of the customer.
 """,
-    'version': "18.0.1.0.0",
+    'version': "19.0.1.0.0",
     'author': "Hadron for Business sp. z o.o.",
     'website': "http://hadronforbusiness.com",
     'license': "OPL-1",
