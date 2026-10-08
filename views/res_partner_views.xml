@@ -17,11 +17,11 @@
                         <span class="o_stat_value"><field name="overdue_amount" widget="monetary"/></span>
                         <span class="o_stat_text">Overdue</span>
                     </div>
-                    <field name="overdue_invoice_count" invisible="1"/>
-                    <field name="overdue_currency_id" invisible="1"/>
                 </button>
             </div>
             <xpath expr="//sheet" position="before">
+                <field name="overdue_invoice_count" invisible="1"/>
+                <field name="overdue_currency_id" invisible="1"/>
                 <header invisible="overdue_invoice_count == 0">
                     <button name="action_send_overdue_statement" type="object" string="Send Overdue Statement"
                             groups="sales_team.group_sale_salesman"/>
