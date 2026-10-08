@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_order_form_overdue" model="ir.ui.view">
+        <field name="name">sale.order.form.inherit.overdue</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[hasclass('oe_title')]" position="before">
+                <field name="overdue_currency_id" invisible="1"/>
+                <div class="alert alert-warning d-flex align-items-center gap-2" role="alert"
+                     invisible="overdue_amount &lt;= 0 or state in ('sale', 'cancel')">
+                    <i class="fa fa-exclamation-triangle"/>
+                    <span>This customer has overdue invoices for
+                        <field name="overdue_amount" widget="monetary" class="oe_inline fw-bold"/>.</span>
+                    <button name="action_view_overdue_invoices" type="object" string="View" class="btn btn-link p-0"/>
+                    <button name="action_print_overdue_statement" type="object" string="Print Statement" class="btn btn-link p-0"/>
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

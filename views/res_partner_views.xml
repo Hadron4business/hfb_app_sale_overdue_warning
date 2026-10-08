@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_partner_form_overdue" model="ir.ui.view">
+        <field name="name">res.partner.form.inherit.overdue</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <group name="misc" position="inside">
+                <field name="overdue_tolerance_days" invisible="parent_id" groups="sales_team.group_sale_salesman"/>
+            </group>
+            <div name="button_box" position="inside">
+                <button name="action_view_overdue_invoices" type="object" class="oe_stat_button text-danger"
+                        icon="fa-exclamation-triangle" invisible="overdue_invoice_count == 0"
+                        groups="sales_team.group_sale_salesman">
+                    <div class="o_stat_info">
+                        <span class="o_stat_value"><field name="overdue_amount" widget="monetary"/></span>
+                        <span class="o_stat_text">Overdue</span>
+                    </div>
+                    <field name="overdue_invoice_count" invisible="1"/>
+                    <field name="overdue_currency_id" invisible="1"/>
+                </button>
+            </div>
+            <xpath expr="//sheet" position="before">
+                <header invisible="overdue_invoice_count == 0">
+                    <button name="action_send_overdue_statement" type="object" string="Send Overdue Statement"
+                            groups="sales_team.group_sale_salesman"/>
+                </header>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
