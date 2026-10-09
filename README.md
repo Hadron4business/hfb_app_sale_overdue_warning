@@ -32,4 +32,4 @@ Overdue warning on quotations and orders, with a tolerance in days, an optional 
 
 ## Status
 
-Odoo 18 build. Tested on the Odoo.sh test instances (automated RPC tests and manual tests, 2026-10-09). Missing before publication: icon, banner.
+Odoo 18 build. Tested on the Odoo.sh test instances (automated RPC tests and manual tests, 2026-10-09). Icon and banner included - ready for publication.
